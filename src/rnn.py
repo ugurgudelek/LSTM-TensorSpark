@@ -7,11 +7,12 @@ import sys
 import time
 import os
 import argparse
-# import argparse
 import csv
 # import json
 import multiprocessing  # works with python 2.6+
 from tqdm import trange
+
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 # flags = tf.app.flags
 
@@ -111,7 +112,7 @@ def csv_to_partitions(line, num_partitions, shuffle=True):
     for d in lines:
         if len(d) > 0:
             data.append(d)
-            
+
     if shuffle:
         np.random.shuffle(data)
 
@@ -148,7 +149,7 @@ def process_batch(train_xy, normalize=False):
         if len(xy) <= 1:
             continue
 
-        x, y = map(float, xy[:-1]), xy[-1]
+        x, y = list(map(float, xy[:-1])), xy[-1]
         train_x.append(x)
         train_y.append(y)
 
@@ -167,7 +168,7 @@ def next_batch(train_x, train_y, batch_size=10, shuffle=True):
             train_x = train_x[p]
             train_y = train_y[p]
 
-        for i, batch in enumerate(xrange(0, train_x.shape[0], batch_size)):
+        for i, batch in enumerate(range(0, train_x.shape[0], batch_size)):
 
             if i == total_iteration:
                 continue
@@ -183,17 +184,17 @@ def train_rnn(partition, net_settings, FLAGS, train_optimizer=tf.train.AdamOptim
     partition = list(partition)
 
     if len(partition) == 0:
-        print 'RNN-LSTM - ZERO SIZE'
+        print('RNN-LSTM - ZERO SIZE')
         return partition
 
     partition_key = partition[0][0]
 
-    print 'LSTM - Partition: {}'.format(partition_key)
+    print('LSTM - Partition: {}'.format(partition_key))
 
     full_batch_size = len(partition[0][1])
     if not FLAGS.batch_size:
         batch_size = full_batch_size
-        for i in xrange(net_settings):
+        for i in range(net_settings):
             net_settings[i]['batch_size'] = batch_size
     else:
         batch_size = FLAGS.batch_size
@@ -259,7 +260,7 @@ def train_rnn(partition, net_settings, FLAGS, train_optimizer=tf.train.AdamOptim
         start = time.time()
         t_acc, v_acc, t_loss, v_loss = 0., 0., 0., 0.
         for step in total_steps:
-            train_input, train_labels = batches.next()
+            train_input, train_labels = batches.__next__()
 
             _, t_loss = sess.run([train_op, loss], feed_dict={
                 input_placeholder: train_input,
@@ -280,7 +281,7 @@ def train_rnn(partition, net_settings, FLAGS, train_optimizer=tf.train.AdamOptim
                 train_writer.add_summary(summary, step)
                 # t_loss = np.mean(t_loss)
 
-                # val_input, val_labels = batches.next()
+                # val_input, val_labels = batches.__next__()
                 # summary, v_loss, v_acc = sess.run([merged, loss, accuracy], feed_dict={
                 #     input_placeholder: val_input,
                 #     labels_placeholder: val_labels
@@ -293,7 +294,7 @@ def train_rnn(partition, net_settings, FLAGS, train_optimizer=tf.train.AdamOptim
 
         trainable_variables = sess.run(train_vars)
     end_time = time.time() - start
-    print 'RNN-LSTM - Partition: {} - Time: {}s'.format(partition[0][0], end_time)
+    print('RNN-LSTM - Partition: {} - Time: {}s'.format(partition[0][0], end_time))
     return trainable_variables
 
 
@@ -312,7 +313,7 @@ def parse_args(argv):
     parser.add_argument("--partitions", default=4, type=int, help="Number of distributed partitions")
 
     # Network parameters
-    parser.add_argument("--epochs", default=1, type=int, help="Number of epochs")
+    parser.add_argument("--epochs", default=50, type=int, help="Number of epochs")
     parser.add_argument("--hidden_units", default='128,256', type=str,
                         help="List of hidden units per layer (seprated by comma)")
     parser.add_argument("--batch_size", default=10, type=int, help="Mini batch size")
@@ -357,8 +358,8 @@ def main(argv):
     conf = SparkConf().setMaster(master_host + workers_master).setAppName(
         "RNN-LSTM").set("spark.executor.memory", sem)
 
-    print 'Total workers: ', workers_master
-    print 'Spark executor memory: ', sem
+    print( 'Total workers: ', workers_master)
+    print( 'Spark executor memory: ', sem)
 
     sc = SparkContext(conf=conf)
     quiet_logs(sc)
@@ -407,7 +408,7 @@ def main(argv):
         wm = weights_mean_rdd.collect()
         # Do something with wm
 
-        print 'RNN-LSTM - Total Processing Time {}s'.format(time.time() - start)
+        print( 'RNN-LSTM - Total Processing Time {}s'.format(time.time() - start))
 
 
 if __name__ == '__main__':

@@ -1,0 +1,4 @@
+
+*.pyc
+src/train_dir
+.idea

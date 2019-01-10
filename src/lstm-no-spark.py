@@ -5,11 +5,12 @@ import time
 import os
 import csv
 from tqdm import trange
+import sys
 
 flags = tf.app.flags
 
 # Network parameters
-flags.DEFINE_integer("epochs", 5, "Number of epochs")
+flags.DEFINE_integer("epochs", 50, "Number of epochs")
 flags.DEFINE_integer("batch_size", 10, "Mini batch size")
 flags.DEFINE_integer("num_classes", 3, "Number of classes")
 flags.DEFINE_integer("in_features", 4, "Number of input features")
@@ -19,9 +20,9 @@ flags.DEFINE_float("learning_rate", 1e-3, "Learning rate")
 flags.DEFINE_integer("evaluate_every", 10, "Numbers of steps for each evaluation")
 
 # Dataset values
-flags.DEFINE_string("training_path", 'train', "Path to training set")
-flags.DEFINE_string("labels_path", "train_labels", "Path to training_labels")
-flags.DEFINE_string("output_path", "output_path", "Path for store network state")
+flags.DEFINE_string("training_path", '../dataset/iris.data', "Path to training set")
+flags.DEFINE_string("labels_path", "../dataset/labels.data", "Path to training_labels")
+flags.DEFINE_string("output_path", "train_dir_iris", "Path for store network state")
 
 # Other options
 flags.DEFINE_string("mode", 'train', "Execution mode")
@@ -29,7 +30,7 @@ flags.DEFINE_string("mode", 'train', "Execution mode")
 flags.DEFINE_string("checkpoint_path", "train_dir", "Directory where to save network model and logs")
 
 FLAGS = flags.FLAGS
-FLAGS._parse_flags()
+FLAGS(sys.argv)
 params_str = ""
 print("Parameters:")
 for attr, value in sorted(FLAGS.__flags.items()):
@@ -121,7 +122,7 @@ def process_batch(train_xy, normalize=False):
     for xy in train_xy:
         if len(xy) <= 1:
             continue
-        x, y = map(float, xy[:-1]), xy[-1]
+        x, y = list(map(float, xy[:-1])), xy[-1]
         train_x.append(x)
         train_y.append(y)
 
@@ -140,7 +141,7 @@ def next_batch(train_x, train_y, batch_size=10, shuffle=True):
             train_x = train_x[p]
             train_y = train_y[p]
 
-        for i, batch in enumerate(xrange(0, train_x.shape[0], batch_size)):
+        for i, batch in enumerate(range(0, train_x.shape[0], batch_size)):
 
             if i == total_iteration:
                 continue
@@ -215,7 +216,7 @@ def train_rnn(dataset, net_settings, train_optimizer=tf.train.AdamOptimizer):
         start = time.time()
         t_acc, v_acc, t_loss, v_loss = 0., 0., 0., 0.
         for step in total_steps:
-            train_input, train_labels = train_batches.next()
+            train_input, train_labels = train_batches.__next__()
 
             _, t_loss = sess.run([train_op, loss], feed_dict={
                 input_placeholder: train_input,
@@ -247,7 +248,7 @@ def train_rnn(dataset, net_settings, train_optimizer=tf.train.AdamOptimizer):
                 total_steps.set_description('Loss: {:.4f} - t_acc {:.3f}'
                                             .format(t_loss, t_acc))
 
-    print 'RNN-LSTM - Time: {}'.format(time.time() - start)
+    print('RNN-LSTM - Time: {}'.format(time.time() - start))
     return []
 
 

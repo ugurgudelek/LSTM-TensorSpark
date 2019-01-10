@@ -1,5 +1,5 @@
 import tensorflow as tf
-import lstm
+from models.recurrent import lstm
 
 
 class RNN:
