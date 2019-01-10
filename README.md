@@ -1,6 +1,9 @@
-# LSTM-TensorSpark
+# LSTM-TensorSpark for python3
 
-Implementation of a LSTM with [TensorFlow](https://www.tensorflow.org/) and distributed on [Apache Spark](http://spark.apache.org/) 
+Forked python2 version from : [EmanuelOverflow/LSTM-TensorSpark](https://github.com/EmanuelOverflow/LSTM-TensorSpark)
+
+
+Implementation of a LSTM with [TensorFlow](https://www.tensorflow.org/) and distributed on [Apache Spark](http://spark.apache.org/)
 
 There are provided two different implementations:
 
@@ -12,32 +15,26 @@ Detailed explanation here: [Distributed implementation of a LSTM on Spark and Te
 Developed for academic purpose
 
 
-## Dependencies
+## Installation
 
-Distributed model needs:
-- Python 2.6+
-- Pyspark
-- TensorFlow 1.0+
-- Numpy
-- Argparse
-- TQDM
+Run ```install.bat```
+Simply it runs
+```
+conda env create -f environment.yml
+```
 
-Standalone model needs:
-- Python 2.6+
-- TensorFlow 1.0+
-- Numpy
-- Argparse
-- TQDM
+You need apply the fix below if you are on Windows Computer  
+[Windows Fix for pyspark=2.4.0](https://github.com/ugurgudelek/LSTM-TensorSpark/tree/master/fix)
 
 
 ## Usage
 
-### Example using Spark: 
+### Example using Spark:
 
-From src directory
-
+Run ```run_with_spark.bat```  
+Simply it runs
 ```
-spark-submit rnn.py --training_path ../dataset/iris.data --labels_path ../dataset/labels.data --output_path train_dir_iris --partitions 4
+spark-submit rnn.py --training_path ../dataset/iris.data --labels_path ../dataset/labels.data --output_path train_dir_iris --partitions 8
 ```
 
 ```
@@ -85,10 +82,11 @@ optional arguments:
 
 ### Example without Spark:
 
-From src directory
+Run ```run_without_spark.bat```  
+Simply it runs
 
 ```
-python lstm-no-spark.py --training_path ../dataset/iris.data --labels_path ../dataset/labels.data --output_path train_dir_iris
+python lstm-no-spark.py
 
 ```
 
