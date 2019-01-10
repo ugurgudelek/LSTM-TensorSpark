@@ -10,7 +10,7 @@ Fail pops because *resource* is a UNIX specific module. Windows does not support
 
 
 ##### worker.py differences
-![](worker.png)
+![](https://github.com/ugurgudelek/LSTM-TensorSpark/blob/master/fix/worker.PNG?raw=true)
 
 
 
