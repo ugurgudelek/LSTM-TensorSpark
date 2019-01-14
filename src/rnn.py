@@ -317,7 +317,7 @@ def parse_args(argv):
     parser.add_argument("--hidden_units", default='128,256', type=str,
                         help="List of hidden units per layer (seprated by comma)")
     parser.add_argument("--batch_size", default=10, type=int, help="Mini batch size")
-    parser.add_argument("--num_classes", default=3, type=int, help="Number of classes in dataset")
+    parser.add_argument("--num_classes", default=500, type=int, help="Number of classes in dataset")
     parser.add_argument("--in_features", default=4, type=int, help="Number of input features")
     parser.add_argument("--learning_rate", default=1e-3, type=float, help="Learning rate")
 

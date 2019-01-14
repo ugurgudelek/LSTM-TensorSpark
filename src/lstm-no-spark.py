@@ -12,7 +12,7 @@ flags = tf.app.flags
 # Network parameters
 flags.DEFINE_integer("epochs", 50, "Number of epochs")
 flags.DEFINE_integer("batch_size", 10, "Mini batch size")
-flags.DEFINE_integer("num_classes", 3, "Number of classes")
+flags.DEFINE_integer("num_classes", 500, "Number of classes")
 flags.DEFINE_integer("in_features", 4, "Number of input features")
 flags.DEFINE_string("hidden_units", '128,256', "List of hidden units per layer (seprated by comma)")
 flags.DEFINE_float("learning_rate", 1e-3, "Learning rate")
@@ -37,7 +37,6 @@ for attr, value in sorted(FLAGS.__flags.items()):
     params_str += "{} = {}\n".format(attr.upper(), value)
     print("{} = {}".format(attr.upper(), value))
 print("")
-
 
 def compute_loss(labels, logits, sparse=True):
     if not sparse:
@@ -96,9 +95,7 @@ def csv_to_batch(lines, split=0.8, shuffle=True):
 
     for line in lines:
         if len(line) > 0:
-            data.append(line)
-
-    # data = np.array(data)
+            data.append(line)    # data = np.array(data)
     # if shuffle:
     #     perm = np.random.permutation(data.shape[0])
     #     data = data[perm]
